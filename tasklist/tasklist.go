@@ -150,13 +150,14 @@ func (tl *TaskList) getStatusIcon(status TaskStatus) (string, lipgloss.Style) {
 }
 
 func (tl *TaskList) truncateText(text string, maxLen int) string {
-	if len(text) <= maxLen {
+	runes := []rune(text)
+	if len(runes) <= maxLen {
 		return text
 	}
 	if maxLen <= 3 {
-		return text[:maxLen]
+		return string(runes[:maxLen])
 	}
-	return text[:maxLen-3] + "..."
+	return string(runes[:maxLen-3]) + "..."
 }
 
 func (tl *TaskList) renderProgressBar(current, total int, width int) string {

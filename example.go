@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
 	"easy-terminal/tasklist"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type tickMsg time.Time
@@ -14,37 +14,41 @@ type model struct {
 	taskList *tasklist.TaskList
 	width    int
 	height   int
+	task2ID  string
+	task3ID  string
 }
 
 func initialModel() model {
 	taskList := tasklist.NewTaskList("Build Process", 80)
-	
+
 	// Add some example tasks
 	task1 := taskList.AddTask("Initialize project")
-	task2 := taskList.AddTask("Install dependencies") 
+	task2 := taskList.AddTask("Install dependencies")
 	task3 := taskList.AddTask("Compile source code")
 	task4 := taskList.AddTask("Run tests")
 	task5 := taskList.AddTask("Package application")
-	
+
 	// Simulate some task states
 	task1.UpdateStatus(tasklist.TaskStatusSuccess)
 	task1.SetMessage("Project initialized successfully")
-	
+
 	task2.UpdateStatus(tasklist.TaskStatusActive)
 	task2.SetProgressMode()
 	task2.UpdateProgress(65, 100)
-	
+
 	task3.UpdateStatus(tasklist.TaskStatusPending)
-	
+
 	task4.UpdateStatus(tasklist.TaskStatusFailed)
 	task4.SetMessage("Test suite failed: 3 failures")
-	
+
 	task5.UpdateStatus(tasklist.TaskStatusPending)
-	
+
 	return model{
 		taskList: taskList,
 		width:    80,
 		height:   20,
+		task2ID:  task2.ID,
+		task3ID:  task3.ID,
 	}
 }
 
@@ -59,7 +63,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		m.taskList.SetMaxWidth(m.width - 4)
 		return m, nil
-		
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
@@ -80,7 +84,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "2":
 			// Start task 3
-			task3 := m.taskList.GetTask("task_3")
+			task3 := m.taskList.GetTask(m.task3ID)
 			if task3 != nil {
 				task3.UpdateStatus(tasklist.TaskStatusActive)
 				task3.SetMessage("Compiling...")
@@ -88,7 +92,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "3":
 			// Update task 3 progress
-			task3 := m.taskList.GetTask("task_3")
+			task3 := m.taskList.GetTask(m.task3ID)
 			if task3 != nil && task3.Status == tasklist.TaskStatusActive {
 				task3.SetProgressMode()
 				task3.UpdateProgress(task3.Progress+10, 100)
@@ -99,7 +103,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 		}
-		
+
 	case tickMsg:
 		// Update progress for active tasks
 		for _, task := range m.taskList.GetTasks() {
@@ -111,14 +115,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, tickCmd()
 	}
-	
+
 	return m, nil
 }
 
 func (m model) View() string {
 	header := "Task List Component Demo\n"
 	header += "Press '1' to toggle task 2, '2' to start task 3, '3' to advance task 3, 'q' to quit\n\n"
-	
+
 	return header + m.taskList.View()
 }
 
@@ -134,3 +138,4 @@ func main() {
 		fmt.Printf("Error: %v", err)
 	}
 }
+

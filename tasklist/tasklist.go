@@ -185,7 +185,9 @@ func (tl *TaskList) renderProgressBar(current, total int, width int) string {
 
 func (tl *TaskList) View() string {
 	tl.mu.RLock()
-	defer tl.mu.RUnlock()
+	tasks := make([]*Task, len(tl.tasks))
+	copy(tasks, tl.tasks)
+	tl.mu.RUnlock()
 
 	var output strings.Builder
 
@@ -194,7 +196,7 @@ func (tl *TaskList) View() string {
 		output.WriteString("\n")
 	}
 
-	for _, task := range tl.tasks {
+	for _, task := range tasks {
 		task.mu.RLock()
 
 		icon, iconStyle := tl.getStatusIcon(task.Status)
@@ -270,4 +272,3 @@ func (tl *TaskList) SetMaxWidth(width int) {
 	defer tl.mu.Unlock()
 	tl.maxWidth = width
 }
-

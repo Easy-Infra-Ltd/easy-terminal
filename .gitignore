@@ -1,0 +1,35 @@
+# Include only specific files - exclusive .gitignore
+
+# Ignore everything else by default
+*
+
+# But include directories (so we can traverse into them)
+!*/
+
+# Include Go source files
+!*.go
+!go.mod
+!go.sum
+
+# Include documentation
+!README.md
+!LICENSE
+!*.md
+
+# Include .git files
+!.gitignore
+!.git
+
+# Include configuration files
+!*.yaml
+!*.yml
+!*.json
+!*.toml
+
+# Include test files
+!*_test.go
+
+# Include example files
+!examples/
+!examples/**
+

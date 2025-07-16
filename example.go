@@ -66,7 +66,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "1":
 			// Toggle task 2 between active and success
-			task2 := m.taskList.GetTask("task_2")
+			task2 := m.taskList.GetTask(m.task2ID)
 			if task2 != nil {
 				if task2.Status == tasklist.TaskStatusActive {
 					task2.UpdateStatus(tasklist.TaskStatusSuccess)
